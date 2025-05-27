@@ -177,8 +177,10 @@ function generatePositioning() {
     placeCard(oCards[1], 'right-middle');
     placeCard(oCards[2], 'left-bottom');
     placeCard(oCards[3], 'left-middle');
-    placeCard('おおえ', 'left-middle');
-    placePair(['おおけ', 'おおこ'], 'right-top');
+    const oo = shuffle(['おおえ', 'おおけ', 'おおこ']);
+    placeCard(oo[0], 'right-top');
+    placeCard(oo[1], 'right-top');
+    placeCard(oo[2], 'left-top');
 
     // わ系の配置
     placeCard('わび', 'left-bottom');
