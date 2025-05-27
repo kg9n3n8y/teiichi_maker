@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>競技かるた定位置作成支援ツール</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>競技かるた定位置作成支援ツール</h1>
+        
+        <div class="control-panel">
+            <label for="handedness">利き手：</label>
+            <select id="handedness">
+                <option value="right">右利き</option>
+                <option value="left">左利き</option>
+            </select>
+            <button onclick="generatePositioning()">定位置を作成</button>
+            <button id="print-btn" onclick="window.print()" style="display:none;">印刷・PDF作成</button>
+        </div>
+
+        <div id="positioning-area" style="display:none;">
+            <table class="positioning-table">
+                <tr>
+                    <td id="left-top" class="left-side"></td>
+                    <td id="right-top" class="right-side"></td>
+                </tr>
+                <tr>
+                    <td id="left-middle" class="left-side"></td>
+                    <td id="right-middle" class="right-side"></td>
+                </tr>
+                <tr>
+                    <td id="left-bottom" class="left-side"></td>
+                    <td id="right-bottom" class="right-side"></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="info">
+            <p>※ このツールは競技かるた初心者向けの定位置作成支援ツールです。</p>
+            <p>※ 利き手を選択して「定位置を作成」ボタンをクリックすると、定位置が表示されます。</p>
+            <p>※ 印刷したり、PDF出力する際は、ブラウザの印刷機能をご利用ください。</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
