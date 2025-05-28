@@ -45,20 +45,22 @@ function generatePositioning() {
         return mapping[pos];
     }
 
-    // 札を配置する関数
+    // 札を右端に配置する関数
     function placeCardRight(card, position) {
         positions[convertPosition(position)].push(card);
-    }
+    } 
 
+    // 札を左端に配置する関数
     function placeCardLeft(card, position) {
         positions[convertPosition(position)].unshift(card);
     }
 
-    // 友札を配置する関数
+    // 友札を右端に配置する関数
     function placePairRight(pair, position) {
         positions[convertPosition(position)].push(pair);
     }
 
+    // 友札を左端に配置する関数
     function placePairLeft(pair, position) {
         positions[convertPosition(position)].unshift(pair);
     }
@@ -104,12 +106,11 @@ function generatePositioning() {
     // よを・よもを配置
     placePairLeft(['よを', 'よも'], 'left-middle');
 
-    // み札の配置
+    // み(2字札)の配置
     const miCards = shuffle(['みち', 'みせ', 'みよ']);
     placeCardRight(miCards[0], 'right-bottom');
     placeCardLeft(miCards[1], 'left-bottom');
     placeCardLeft(miCards[2], 'left-bottom');
-    placePairRight(['みかき', 'みかの'], 'right-top');
 
     // た札の配置
     const taCards = shuffle(['たか', 'たち', 'たご', 'たま', 'たき', 'たれ']);
@@ -120,29 +121,25 @@ function generatePositioning() {
     placeCardLeft(taCards[4], 'left-bottom');
     placeCardLeft(taCards[5], 'left-middle');
 
-    // こ札の配置
+    // こ(2字札)の配置
     const koCards = shuffle(['この', 'こぬ', 'こい', 'これ']);
     placeCardLeft(koCards[0], 'left-middle');
     placeCardLeft(koCards[1], 'left-middle');
     placeCardRight(koCards[2], 'right-bottom');
     placeCardRight(koCards[3], 'right-bottom');
 
-    // お札の配置
+    // お(2字札)の配置
     const oCards = shuffle(['おく', 'おと', 'おぐ', 'おも']);
     placeCardRight(oCards[0], 'right-bottom');
     placeCardRight(oCards[1], 'right-middle');
     placeCardLeft(oCards[2], 'left-bottom');
     placeCardLeft(oCards[3], 'left-middle');
-    const ooCards = shuffle(['おおえ', 'おおけ', 'おおこ']);
-    placeCardRight(ooCards[0], 'right-top');
-    placeCardRight(ooCards[1], 'right-top');
-    placeCardLeft(ooCards[2], 'left-top');
 
-    // わび・なつの配置
+    // わび(左下段)・なつ(右下段)の配置
     placeCardLeft('わび', 'left-bottom');
     placeCardRight('なつ', 'right-bottom');
 
-    // あいあしあけの配置
+    // あい・あし・あけの配置（右下段・右中段・左下段に1枚ずつ）
     const aCards = shuffle(['あい', 'あし', 'あけ']);
     placeCardRight(aCards[0], 'right-bottom');
     placeCardRight(aCards[1], 'right-middle');
@@ -157,16 +154,6 @@ function generatePositioning() {
     const kaPairs = shuffle([['かく', 'かさ'], ['かぜを', 'かぜそ']]);
     placePairRight(kaPairs[0], 'right-middle');
     placePairLeft(kaPairs[1], 'left-bottom');
-
-    // は札の配置（右上段に1組、左中段に1組をランダムに）
-    const haruPairs = shuffle([['はるす', 'はるの'], ['はなさ', 'はなの']]);
-    placePairRight(haruPairs[0], 'right-top');
-    placePairLeft(haruPairs[1], 'left-middle');
-
-    // わ札の配置
-    const waPairs = shuffle([['わがい', 'わがそ'], ['わすれ', 'わすら']]);
-    placePairRight(waPairs[0], 'right-top');
-    placePairLeft(waPairs[1], 'left-top');
 
     // いまは・いまこを配置（いにと反対側で段も異なる、上段以外）
     if (iniChihaHisaCards[0] === 'いに') {
@@ -186,13 +173,32 @@ function generatePositioning() {
         placePairRight(['ひとは', 'ひとも'], 'right-middle');
     }
 
-    // な札の配置
+    // は札の配置（右上段に1組、左中段に1組をランダムに）
+    const haruPairs = shuffle([['はるす', 'はるの'], ['はなさ', 'はなの']]);
+    placePairRight(haruPairs[0], 'right-top');
+    placePairLeft(haruPairs[1], 'left-middle');
+
+    // みかき・みかのを配置（右上段）
+    placePairRight(['みかき', 'みかの'], 'right-top');
+
+    // お(3字札)の配置（右上段に2枚、左上段に1枚をランダムに配置）
+    const ooCards = shuffle(['おおえ', 'おおけ', 'おおこ']);
+    placeCardRight(ooCards[0], 'right-top');
+    placeCardRight(ooCards[1], 'right-top');
+    placeCardLeft(ooCards[2], 'left-top');
+
+    // わ(3字札)の配置（右上段に1組、左上段に1組をランダムに配置）
+    const waPairs = shuffle([['わがい', 'わがそ'], ['わすれ', 'わすら']]);
+    placePairRight(waPairs[0], 'right-top');
+    placePairLeft(waPairs[1], 'left-top');
+
+    // な(3字札)の配置
     placeCardRight('なにし', 'right-middle');
     const naPairs = shuffle([['ながら', 'ながか'], ['なげき', 'なげけ']]);
     placePairLeft(naPairs[0], 'left-middle');
     placePairRight(naPairs[1], 'right-top');
 
-    // あ札の配置
+    // あ(3字札)の配置
     const aPairs2 = shuffle([['あわじ', 'あわれ'], ['あまつ', 'あまの']]);
     placePairLeft(aPairs2[0], 'left-top');
     placePairRight(aPairs2[1], 'right-top');
@@ -203,8 +209,6 @@ function generatePositioning() {
 
     placePairLeft(['あきの', 'あきか'], 'left-top');
     placeCardLeft('あさじ', 'left-middle');
-
-    // 端の札を配置
 
     // ちぎりき・ちぎりおを配置（ちはと反対側で段も異なる、上段以外）
     if (iniChihaHisaCards[0] === 'ちは') {
