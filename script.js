@@ -1,3 +1,7 @@
+document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("dblclick", function(e) { e.preventDefault(); }, { passive: false });
+});
+
 // 札の配置を管理するオブジェクト
 const positions = {
     'left-top': [],
