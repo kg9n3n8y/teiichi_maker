@@ -47,22 +47,38 @@ function generatePositioning() {
 
     // 札を右端に配置する関数
     function placeCardRight(card, position) {
-        positions[convertPosition(position)].push(card);
+        if (!isLeftHanded) {
+            positions[convertPosition(position)].push(card);
+        } else {
+            positions[convertPosition(position)].unshift(card);
+        }
     } 
 
     // 札を左端に配置する関数
     function placeCardLeft(card, position) {
-        positions[convertPosition(position)].unshift(card);
+        if (!isLeftHanded) {
+            positions[convertPosition(position)].unshift(card);
+        } else {
+            positions[convertPosition(position)].push(card);
+        }
     }
 
     // 友札を右端に配置する関数
     function placePairRight(pair, position) {
-        positions[convertPosition(position)].push(pair);
+        if (!isLeftHanded) {
+            positions[convertPosition(position)].push(pair);
+        } else {
+            positions[convertPosition(position)].unshift(pair);
+        }
     }
 
     // 友札を左端に配置する関数
     function placePairLeft(pair, position) {
-        positions[convertPosition(position)].unshift(pair);
+        if (!isLeftHanded) {
+            positions[convertPosition(position)].unshift(pair);
+        } else {
+            positions[convertPosition(position)].push(pair);
+        }
     }
 
     // 会の指導方針に基づく配置
@@ -199,15 +215,15 @@ function generatePositioning() {
     placePairRight(naPairs[1], 'right-top');
 
     // あ(3字札)の配置
-    const aPairs2 = shuffle([['あわじ', 'あわれ'], ['あまつ', 'あまの']]);
-    placePairLeft(aPairs2[0], 'left-top');
+    const aPairs1 = shuffle([['あわじ', 'あわれ'], ['あまつ', 'あまの'], ['あきの', 'あきか']]);
+    placePairLeft(aPairs1[0], 'left-top');
+    placePairLeft(aPairs1[1], 'left-top');
+    placePairRight(aPairs1[2], 'right-top');
+
+    const aPairs2 = shuffle([['あらし', 'あらざ'], ['ありま', 'ありあ']]);
+    placePairLeft(aPairs2[0], 'left-bottom');
     placePairRight(aPairs2[1], 'right-top');
 
-    const aPairs1 = shuffle([['あらし', 'あらざ'], ['ありま', 'ありあ']]);
-    placePairLeft(aPairs1[0], 'left-bottom');
-    placePairRight(aPairs1[1], 'right-top');
-
-    placePairLeft(['あきの', 'あきか'], 'left-top');
     placeCardLeft('あさじ', 'left-middle');
 
     // ちぎりき・ちぎりおを配置（ちはと反対側で段も異なる、上段以外）
