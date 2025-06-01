@@ -1,3 +1,7 @@
+html {
+  touch-action     : manipulation; /* タッチ操作の最適化 */
+}
+
 body {
     font-family: "ヒラギノ丸ゴ ProN", "Hiragino Maru Gothic ProN", "メイリオ", Meiryo, sans-serif;
     background-color: #ffffff;
@@ -24,7 +28,7 @@ h1 {
     padding: 15px;
     background-color: #f5f5f5;
     border-radius: 8px;
-    max-width: 1000px;
+    max-width: 900px;
 }
 
 .control-panel label {
@@ -55,19 +59,19 @@ h1 {
     background-color: #0056b3;
 }
 
-#print-btn {
-    background-color: #17a2b8;
+#download-btn {
+    background-color: #28a745;
 }
 
-#print-btn:hover {
-    background-color: #138496;
+#download-btn:hover {
+    background-color: #218838;
 }
 
 #positioning-area {
     background-color: white;
     margin: 20px auto;
     overflow-x: auto;
-    width: 1000px;
+    width: 900px;
 }
 
 .positioning-table {
@@ -83,7 +87,7 @@ h1 {
     vertical-align: top;
     padding: 15px;
     width: 50%;
-    height: 120px;
+    height: 110px;
     overflow: hidden;
 }
 
@@ -122,7 +126,7 @@ h1 {
     margin-top: 20px;
     font-size: 14px;
     color: #666;
-    max-width: 1000px;
+    max-width: 900px;
     margin: 20px auto;
 }
 
