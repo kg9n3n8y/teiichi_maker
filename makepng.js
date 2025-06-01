@@ -110,134 +110,100 @@ function drawVerticalTextOnCanvas(ctx, text, x, y) {
     });
 }
 
-// // SVGをPNGに変換する関数（iPhone対応版）
-// function convertSvgToPng(svg, width, height) {
-//     // SVGを文字列に変換
-//     const serializer = new XMLSerializer();
-//     const svgString = serializer.serializeToString(svg);
-    
-//     // data URIを作成
-//     const svgDataUri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
-    
-//     // キャンバスを作成してSVGを描画
-//     const canvas = document.createElement('canvas');
-//     const ctx = canvas.getContext('2d');
-//     canvas.width = width * 2; // 高解像度化
-//     canvas.height = height * 2;
-//     ctx.scale(2, 2);
-    
-//     const img = new Image();
-//     img.onload = function() {
-//         ctx.drawImage(img, 0, 0);
-        
-//         // PNGデータをBase64として取得
-//         const dataURL = canvas.toDataURL('image/png');
-        
-//         // iPhone/Safari対応のダウンロード処理
-//         if (navigator.userAgent.match(/iPhone|iPad|iPod/i) || navigator.userAgent.match(/Safari/i)) {
-//             // 新しいウィンドウで画像を開く（iPhoneの場合）
-//             const newWindow = window.open();
-//             newWindow.document.write(`
-//                 <html>
-//                     <head>
-//                         <title>画像ダウンロード</title>
-//                         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-//                         <style>
-//                             body { 
-//                                 margin: 0; 
-//                                 padding: 20px; 
-//                                 text-align: center; 
-//                                 font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-//                             }
-//                             img { 
-//                                 max-width: 100%; 
-//                                 height: auto; 
-//                                 border: 1px solid #ccc;
-//                                 margin: 20px 0;
-//                             }
-//                             .instructions {
-//                                 background: #f0f0f0;
-//                                 padding: 15px;
-//                                 border-radius: 8px;
-//                                 margin: 20px 0;
-//                                 font-size: 14px;
-//                                 line-height: 1.5;
-//                             }
-//                         </style>
-//                     </head>
-//                     <body>
-//                         <h2>画像が生成されました</h2>
-//                         <img src="${dataURL}" alt="生成された画像">
-//                         <div class="instructions">
-//                             <strong>保存方法：</strong><br>
-//                             画像を長押し → 「写真に保存」を選択
-//                         </div>
-//                         <button onclick="window.close()" style="
-//                             padding: 12px 24px;
-//                             font-size: 16px;
-//                             background: #007AFF;
-//                             color: white;
-//                             border: none;
-//                             border-radius: 8px;
-//                             cursor: pointer;
-//                         ">閉じる</button>
-//                     </body>
-//                 </html>
-//             `);
-//         } else {
-//             // デスクトップブラウザの場合は従来の方法
-//             canvas.toBlob(function(blob) {
-//                 const url = URL.createObjectURL(blob);
-//                 const link = document.createElement('a');
-//                 link.download = '定位置_' + new Date().toISOString().slice(0, 10) + '.png';
-//                 link.href = url;
-                
-//                 // ユーザーの操作をトリガーとして実行
-//                 document.body.appendChild(link);
-//                 link.click();
-//                 document.body.removeChild(link);
-//                 URL.revokeObjectURL(url);
-//             }, 'image/png');
-//         }
-//     };
-    
-//     img.onerror = function(error) {
-//         console.error('画像変換エラー:', error);
-//         alert('画像の変換に失敗しました。');
-//     };
-    
-//     img.src = svgDataUri;
-// }
-
-// さらにシンプルな代替案（Base64データURLを直接表示）
+// SVGをPNGに変換する関数（iPhone対応版）
 function convertSvgToPng(svg, width, height) {
+    // SVGを文字列に変換
     const serializer = new XMLSerializer();
     const svgString = serializer.serializeToString(svg);
+    
+    // data URIを作成
     const svgDataUri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
     
+    // キャンバスを作成してSVGを描画
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    canvas.width = width * 2;
+    canvas.width = width * 2; // 高解像度化
     canvas.height = height * 2;
     ctx.scale(2, 2);
     
     const img = new Image();
     img.onload = function() {
         ctx.drawImage(img, 0, 0);
+        
+        // PNGデータをBase64として取得
         const dataURL = canvas.toDataURL('image/png');
         
-        // データURLを新しいタブで開く（すべてのブラウザ対応）
-        const newTab = window.open();
-        newTab.document.write(`
-            <img src="${dataURL}" style="max-width:100%; height:auto;" alt="Generated Image">
-            <br><br>
-            <p style="font-family: sans-serif; padding: 0 20px;">
-                <strong>保存方法：</strong><br>
-                • iPhone/iPad: 画像を長押し → 「写真に保存」<br>
-                • Android: 画像を長押し → 「画像をダウンロード」<br>
-                • PC: 右クリック → 「名前を付けて画像を保存」
-            </p>
-        `);
+        // iPhone/Safari対応のダウンロード処理
+        if (navigator.userAgent.match(/iPhone|iPad|iPod/i) || navigator.userAgent.match(/Safari/i)) {
+            // 新しいウィンドウで画像を開く（iPhoneの場合）
+            const newWindow = window.open();
+            newWindow.document.write(`
+                <html>
+                    <head>
+                        <title>画像ダウンロード</title>
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <style>
+                            body { 
+                                margin: 0; 
+                                padding: 20px; 
+                                text-align: center; 
+                                font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+                            }
+                            img { 
+                                max-width: 100%; 
+                                height: auto; 
+                                border: 1px solid #ccc;
+                                margin: 20px 0;
+                            }
+                            .instructions {
+                                background: #f0f0f0;
+                                padding: 15px;
+                                border-radius: 8px;
+                                margin: 20px 0;
+                                font-size: 14px;
+                                line-height: 1.5;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <h2>画像が生成されました</h2>
+                        <img src="${dataURL}" alt="生成された画像">
+                        <div class="instructions">
+                            <strong>保存方法：</strong><br>
+                            画像を長押し → 「写真に保存」を選択
+                        </div>
+                        <button onclick="window.close()" style="
+                            padding: 12px 24px;
+                            font-size: 16px;
+                            background: #007AFF;
+                            color: white;
+                            border: none;
+                            border-radius: 8px;
+                            cursor: pointer;
+                        ">閉じる</button>
+                    </body>
+                </html>
+            `);
+        } else {
+            // デスクトップブラウザの場合は従来の方法
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.download = '定位置_' + new Date().toISOString().slice(0, 10) + '.png';
+                link.href = url;
+                
+                // ユーザーの操作をトリガーとして実行
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            }, 'image/png');
+        }
+    };
+    
+    img.onerror = function(error) {
+        console.error('画像変換エラー:', error);
+        alert('画像の変換に失敗しました。');
     };
     
     img.src = svgDataUri;
