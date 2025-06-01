@@ -110,7 +110,7 @@ function drawVerticalTextOnCanvas(ctx, text, x, y) {
     });
 }
 
-// SVGをPNGに変換する関数（iPhone対応版）
+// SVGをPNGに変換する関数（iPhone対応版・ポップアップブロック対策付き）
 function convertSvgToPng(svg, width, height) {
     // SVGを文字列に変換
     const serializer = new XMLSerializer();
@@ -135,55 +135,63 @@ function convertSvgToPng(svg, width, height) {
         
         // iPhone/Safari対応のダウンロード処理
         if (navigator.userAgent.match(/iPhone|iPad|iPod/i) || navigator.userAgent.match(/Safari/i)) {
-            // 新しいウィンドウで画像を開く（iPhoneの場合）
-            const newWindow = window.open();
-            newWindow.document.write(`
-                <html>
-                    <head>
-                        <title>画像ダウンロード</title>
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <style>
-                            body { 
-                                margin: 0; 
-                                padding: 20px; 
-                                text-align: center; 
-                                font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-                            }
-                            img { 
-                                max-width: 100%; 
-                                height: auto; 
-                                border: 1px solid #ccc;
-                                margin: 20px 0;
-                            }
-                            .instructions {
-                                background: #f0f0f0;
-                                padding: 15px;
+            // ポップアップを試行
+            const newWindow = window.open('', '_blank');
+            
+            // ポップアップがブロックされた場合の対策
+            if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                // ポップアップが失敗した場合、現在のページに画像を表示
+                showImageInCurrentPage(dataURL);
+            } else {
+                // ポップアップが成功した場合
+                newWindow.document.write(`
+                    <html>
+                        <head>
+                            <title>画像ダウンロード</title>
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                            <style>
+                                body { 
+                                    margin: 0; 
+                                    padding: 20px; 
+                                    text-align: center; 
+                                    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+                                }
+                                img { 
+                                    max-width: 100%; 
+                                    height: auto; 
+                                    border: 1px solid #ccc;
+                                    margin: 20px 0;
+                                }
+                                .instructions {
+                                    background: #f0f0f0;
+                                    padding: 15px;
+                                    border-radius: 8px;
+                                    margin: 20px 0;
+                                    font-size: 14px;
+                                    line-height: 1.5;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <h2>画像が生成されました</h2>
+                            <img src="${dataURL}" alt="生成された画像">
+                            <div class="instructions">
+                                <strong>保存方法：</strong><br>
+                                画像を長押し → 「写真に保存」を選択
+                            </div>
+                            <button onclick="window.close()" style="
+                                padding: 12px 24px;
+                                font-size: 16px;
+                                background: #007AFF;
+                                color: white;
+                                border: none;
                                 border-radius: 8px;
-                                margin: 20px 0;
-                                font-size: 14px;
-                                line-height: 1.5;
-                            }
-                        </style>
-                    </head>
-                    <body>
-                        <h2>画像が生成されました</h2>
-                        <img src="${dataURL}" alt="生成された画像">
-                        <div class="instructions">
-                            <strong>保存方法：</strong><br>
-                            画像を長押し → 「写真に保存」を選択
-                        </div>
-                        <button onclick="window.close()" style="
-                            padding: 12px 24px;
-                            font-size: 16px;
-                            background: #007AFF;
-                            color: white;
-                            border: none;
-                            border-radius: 8px;
-                            cursor: pointer;
-                        ">閉じる</button>
-                    </body>
-                </html>
-            `);
+                                cursor: pointer;
+                            ">閉じる</button>
+                        </body>
+                    </html>
+                `);
+            }
         } else {
             // デスクトップブラウザの場合は従来の方法
             canvas.toBlob(function(blob) {
@@ -204,6 +212,156 @@ function convertSvgToPng(svg, width, height) {
     img.onerror = function(error) {
         console.error('画像変換エラー:', error);
         alert('画像の変換に失敗しました。');
+    };
+    
+    img.src = svgDataUri;
+}
+
+// ポップアップがブロックされた場合に現在のページに画像を表示する関数
+function showImageInCurrentPage(dataURL) {
+    // 既存のオーバーレイがあれば削除
+    const existingOverlay = document.getElementById('image-download-overlay');
+    if (existingOverlay) {
+        existingOverlay.remove();
+    }
+    
+    // オーバーレイを作成
+    const overlay = document.createElement('div');
+    overlay.id = 'image-download-overlay';
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        box-sizing: border-box;
+    `;
+    
+    // コンテンツコンテナ
+    const container = document.createElement('div');
+    container.style.cssText = `
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        max-width: 90%;
+        max-height: 90%;
+        overflow: auto;
+        text-align: center;
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    `;
+    
+    container.innerHTML = `
+        <h2 style="margin-top: 0; color: #333;">画像が生成されました</h2>
+        <img src="${dataURL}" alt="生成された画像" style="
+            max-width: 100%; 
+            height: auto; 
+            border: 1px solid #ccc;
+            margin: 20px 0;
+            border-radius: 8px;
+        ">
+        <div style="
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #555;
+        ">
+            <strong>保存方法：</strong><br>
+            画像を長押し → 「写真に保存」を選択<br>
+            <br>
+            <small>※ポップアップがブロックされたため、こちらに表示しています</small>
+        </div>
+        <button id="close-overlay-btn" style="
+            padding: 12px 24px;
+            font-size: 16px;
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-right: 10px;
+        ">閉じる</button>
+        <button id="copy-link-btn" style="
+            padding: 12px 24px;
+            font-size: 16px;
+            background: #34C759;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        ">画像リンクをコピー</button>
+    `;
+    
+    overlay.appendChild(container);
+    document.body.appendChild(overlay);
+    
+    // 閉じるボタンのイベント
+    document.getElementById('close-overlay-btn').addEventListener('click', function() {
+        overlay.remove();
+    });
+    
+    // 画像リンクコピーボタンのイベント
+    document.getElementById('copy-link-btn').addEventListener('click', function() {
+        navigator.clipboard.writeText(dataURL).then(() => {
+            const btn = document.getElementById('copy-link-btn');
+            const originalText = btn.textContent;
+            btn.textContent = 'コピー完了！';
+            btn.style.background = '#FF9500';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = '#34C759';
+            }, 2000);
+        }).catch(() => {
+            alert('コピーに失敗しました。画像を長押しして保存してください。');
+        });
+    });
+    
+    // オーバーレイの背景をクリックしたら閉じる
+    overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) {
+            overlay.remove();
+        }
+    });
+}
+
+// さらにシンプルな代替案（Base64データURLを直接表示）
+function convertSvgToPngSimple(svg, width, height) {
+    const serializer = new XMLSerializer();
+    const svgString = serializer.serializeToString(svg);
+    const svgDataUri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
+    
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = width * 2;
+    canvas.height = height * 2;
+    ctx.scale(2, 2);
+    
+    const img = new Image();
+    img.onload = function() {
+        ctx.drawImage(img, 0, 0);
+        const dataURL = canvas.toDataURL('image/png');
+        
+        // データURLを新しいタブで開く（すべてのブラウザ対応）
+        const newTab = window.open();
+        newTab.document.write(`
+            <img src="${dataURL}" style="max-width:100%; height:auto;" alt="Generated Image">
+            <br><br>
+            <p style="font-family: sans-serif; padding: 0 20px;">
+                <strong>保存方法：</strong><br>
+                • iPhone/iPad: 画像を長押し → 「写真に保存」<br>
+                • Android: 画像を長押し → 「画像をダウンロード」<br>
+                • PC: 右クリック → 「名前を付けて画像を保存」
+            </p>
+        `);
     };
     
     img.src = svgDataUri;
