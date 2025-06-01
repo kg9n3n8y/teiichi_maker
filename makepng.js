@@ -177,7 +177,7 @@ function convertSvgToPng(svg, width, height) {
                             <img src="${dataURL}" alt="生成された画像">
                             <div class="instructions">
                                 <strong>保存方法：</strong><br>
-                                上の画像を長押し → 「写真に保存」を選択
+                                上の画像を長押し(or右クリック) → 「保存」を選択
                             </div>
                             <button onclick="window.close()" style="
                                 padding: 12px 24px;
@@ -276,7 +276,7 @@ function showImageInCurrentPage(dataURL) {
             color: #555;
         ">
             <strong>保存方法：</strong><br>
-            上の画像を長押し → 「写真に保存」を選択<br>
+            上の画像を(or右クリック) → 「保存」を選択<br>
             <br>
             <small>※ポップアップがブロックされたため、こちらに表示しています</small>
         </div>
