@@ -158,7 +158,7 @@ function convertSvgToPng(svg, width, height) {
             newWindow.document.close();
         } else {
             // ポップアップがブロックされた場合の代替手段
-            alert('ポップアップがブロックされました。ブラウザの設定を確認してください。');
+            convertSvgToPngFallBack(svg, width, height);
         }
     };
     
@@ -169,10 +169,42 @@ function convertSvgToPng(svg, width, height) {
     img.src = svgDataUri;
 }
 
-// キャンバスに縦書きテキストを描画する関数
-function drawVerticalTextOnCanvas(ctx, text, x, y) {
-    const chars = text.split('');
-    chars.forEach((char, index) => {
-        ctx.fillText(char, x, y + (index * 20));
-    });
+// SVGをPNGに変換する関数
+function convertSvgToPngFallBack(svg, width, height) {
+    // SVGを文字列に変換
+    const serializer = new XMLSerializer();
+    const svgString = serializer.serializeToString(svg);
+    
+    // data URIを作成
+    const svgDataUri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
+    
+    // キャンバスを作成してSVGを描画
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = width * 2; // 高解像度化
+    canvas.height = height * 2;
+    ctx.scale(2, 2);
+    
+    const img = new Image();
+    img.onload = function() {
+        ctx.drawImage(img, 0, 0);
+        
+        // PNGとしてダウンロード
+        canvas.toBlob(function(blob) {
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.download = '定位置_' + new Date().toISOString().slice(0, 10) + '.png';
+            link.href = url;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }, 'image/png');
+    };
+    
+    img.onerror = function(error) {
+        console.error('画像変換エラー:', error);
+    };
+    
+    img.src = svgDataUri;
 }
