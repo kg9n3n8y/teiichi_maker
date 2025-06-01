@@ -102,7 +102,7 @@ function drawVerticalText(svg, text, x, y, isLeftAlign) {
     });
 }
 
-// SVGをPNGに変換する関数
+// SVGをPNGに変換してスマホに表示する関数
 function convertSvgToPng(svg, width, height) {
     // SVGを文字列に変換
     const serializer = new XMLSerializer();
@@ -122,17 +122,44 @@ function convertSvgToPng(svg, width, height) {
     img.onload = function() {
         ctx.drawImage(img, 0, 0);
         
-        // PNGとしてダウンロード
-        canvas.toBlob(function(blob) {
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.download = '定位置_' + new Date().toISOString().slice(0, 10) + '.png';
-            link.href = url;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-        }, 'image/png');
+        // PNGデータURLを取得
+        const dataURL = canvas.toDataURL('image/png');
+        
+        // 新しいタブで画像を開く
+        const newWindow = window.open();
+        if (newWindow) {
+            newWindow.document.write(`
+                <html>
+                    <head>
+                        <title>定位置_${new Date().toISOString().slice(0, 10)}</title>
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <style>
+                            body { 
+                                margin: 0; 
+                                padding: 0; 
+                                display: flex; 
+                                justify-content: center; 
+                                align-items: center; 
+                                min-height: 100vh;
+                                background-color: #f0f0f0;
+                            }
+                            img { 
+                                max-width: 100%; 
+                                max-height: 100vh; 
+                                object-fit: contain;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <img src="${dataURL}" alt="Generated Image">
+                    </body>
+                </html>
+            `);
+            newWindow.document.close();
+        } else {
+            // ポップアップがブロックされた場合の代替手段
+            alert('ポップアップがブロックされました。ブラウザの設定を確認してください。');
+        }
     };
     
     img.onerror = function(error) {
