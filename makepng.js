@@ -177,7 +177,7 @@ function convertSvgToPng(svg, width, height) {
                             <img src="${dataURL}" alt="生成された画像">
                             <div class="instructions">
                                 <strong>保存方法：</strong><br>
-                                画像を長押し → 「写真に保存」を選択
+                                上の画像を長押し → 「写真に保存」を選択
                             </div>
                             <button onclick="window.close()" style="
                                 padding: 12px 24px;
@@ -276,7 +276,7 @@ function showImageInCurrentPage(dataURL) {
             color: #555;
         ">
             <strong>保存方法：</strong><br>
-            画像を長押し → 「写真に保存」を選択<br>
+            上の画像を長押し → 「写真に保存」を選択<br>
             <br>
             <small>※ポップアップがブロックされたため、こちらに表示しています</small>
         </div>
@@ -290,15 +290,6 @@ function showImageInCurrentPage(dataURL) {
             cursor: pointer;
             margin-right: 10px;
         ">閉じる</button>
-        <button id="copy-link-btn" style="
-            padding: 12px 24px;
-            font-size: 16px;
-            background: #34C759;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        ">画像リンクをコピー</button>
     `;
     
     overlay.appendChild(container);
@@ -309,60 +300,10 @@ function showImageInCurrentPage(dataURL) {
         overlay.remove();
     });
     
-    // 画像リンクコピーボタンのイベント
-    document.getElementById('copy-link-btn').addEventListener('click', function() {
-        navigator.clipboard.writeText(dataURL).then(() => {
-            const btn = document.getElementById('copy-link-btn');
-            const originalText = btn.textContent;
-            btn.textContent = 'コピー完了！';
-            btn.style.background = '#FF9500';
-            setTimeout(() => {
-                btn.textContent = originalText;
-                btn.style.background = '#34C759';
-            }, 2000);
-        }).catch(() => {
-            alert('コピーに失敗しました。画像を長押しして保存してください。');
-        });
-    });
-    
     // オーバーレイの背景をクリックしたら閉じる
     overlay.addEventListener('click', function(e) {
         if (e.target === overlay) {
             overlay.remove();
         }
     });
-}
-
-// さらにシンプルな代替案（Base64データURLを直接表示）
-function convertSvgToPngSimple(svg, width, height) {
-    const serializer = new XMLSerializer();
-    const svgString = serializer.serializeToString(svg);
-    const svgDataUri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
-    
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = width * 2;
-    canvas.height = height * 2;
-    ctx.scale(2, 2);
-    
-    const img = new Image();
-    img.onload = function() {
-        ctx.drawImage(img, 0, 0);
-        const dataURL = canvas.toDataURL('image/png');
-        
-        // データURLを新しいタブで開く（すべてのブラウザ対応）
-        const newTab = window.open();
-        newTab.document.write(`
-            <img src="${dataURL}" style="max-width:100%; height:auto;" alt="Generated Image">
-            <br><br>
-            <p style="font-family: sans-serif; padding: 0 20px;">
-                <strong>保存方法：</strong><br>
-                • iPhone/iPad: 画像を長押し → 「写真に保存」<br>
-                • Android: 画像を長押し → 「画像をダウンロード」<br>
-                • PC: 右クリック → 「名前を付けて画像を保存」
-            </p>
-        `);
-    };
-    
-    img.src = svgDataUri;
 }
