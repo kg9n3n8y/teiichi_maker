@@ -60,22 +60,29 @@ function downloadAsPNG() {
             
             if (cards && cards.length > 0) {
                 const isLeftSide = cellId.includes('left');
-                const baseX = colIndex * cellWidth + (isLeftSide ? 20 : cellWidth - 20);
+                const margin = 20;
+                const spacing = 18;
+                const totalCardCount = cards.reduce((count, item) => {
+                    return count + (Array.isArray(item) ? item.length : 1);
+                }, 0);
+                const baseX = colIndex * cellWidth + (isLeftSide
+                    ? margin
+                    : cellWidth - margin - (totalCardCount - 1) * spacing);
                 const baseY = rowIndex * cellHeight + 25;
                 
                 let currentX = baseX;
                 
-                cards.forEach((item, cardIndex) => {
+                cards.forEach((item) => {
                     if (Array.isArray(item)) {
                         // 友札の場合
-                        item.forEach((card, pairIndex) => {
+                        item.forEach((card) => {
                             drawVerticalText(svg, card, currentX, baseY, isLeftSide);
-                            currentX += isLeftSide ? 18 : -18;
+                            currentX += spacing;
                         });
                     } else {
                         // 単独札の場合
                         drawVerticalText(svg, item, currentX, baseY, isLeftSide);
-                        currentX += isLeftSide ? 18 : -18;
+                        currentX += spacing;
                     }
                 });
             }
